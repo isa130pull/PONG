@@ -1,27 +1,32 @@
 var ctx;
+var screenW,screenH;
+
+
 function init(){
     var canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
+    
+    //画面サイズを取得、反映
+    screenW = window.innerWidth;
+    screenH = window.innerHeight;
+    canvas.width = screenW;
+    canvas.height = screenH;
 
-    ctx.strokeStyle = "#FF0000";
-    ctx.fillStyle = "#00FF00";
-    drawTriangle(100,10,false,false);
-    drawTriangle(200,10,true,false);
-    drawTriangle(300,10,false,true);
-    drawTriangle(400,10,true,true);
+    ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#FFFFFF";
+//    console.log("width= " + screenW + " height= " + screenH);
+
+    //描画タイマー
+    setInterval(render,16.6);
 }
 
-function drawTriangle(x,y,isClose,isFill){
+function drawPlayer(x,y,w,h){
+    ctx.clearRect(0, 0, screenW, screenH);
     ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.lineTo(x + 80,y);
-    ctx.lineTo(x + 80,y + 80);
-    if (isClose) {
-        ctx.closePath();
-    }
-    if (isFill) {
-        ctx.fill();
-    } else {
-        ctx.stroke();
-    }
+    ctx.fillRect(x, y, w, h);
+}
+
+function render() {
+    var width = screenW / 8;
+    var height = screenH / 25;
+    drawPlayer(screenW / 2 - width / 2,screenH / 10 * 9 - height / 2,width,height);
 }
