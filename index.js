@@ -1,6 +1,7 @@
 var ctx;
 var screenW,screenH;
 
+var touchX = 0,touchY = 0;
 
 function init(){
     var canvas = document.getElementById("canvas");
@@ -16,36 +17,37 @@ function init(){
 //    console.log("width= " + screenW + " height= " + screenH);
     //描画タイマー
     setInterval(render,16.6);
+    
+    //タッチ可能か検出
+    var touchStart = ('ontouchstart' in window) ? "touchstart" : "mousedown";
+    var touchMove = ('touchmove' in window) ? "touchmove" : "mousemove";    
+    var touchEnd = ('touchend' in window) ? "touchend" : "mouseup";
+
     // // タッチを開始すると実行されるイベント
-    document.addEventListener("touchstart",TouchEventFunc);
+    document.addEventListener(touchStart,TouchEventStart);
     // タッチしたまま平行移動すると実行されるイベント
-    document.addEventListener("touchmove",TouchEventFunc);
+    document.addEventListener(touchmove,TouchEventMove);
     // タッチを終了すると実行されるイベント
-    document.addEventListener("touchend",TouchEventFunc);
+    document.addEventListener(touchend,TouchEventEnd);
 }
 
-// タッチすると実行される関数           
-function TouchEventFunc(e){
-    // TouchList オブジェクトを取得
-   var touch_list = e.changedTouches;
 
-   // 中身に順番にアクセス
-   var i;
-   var num = touch_list.length;
-   for(i=0;i < num;i++){
+function TouchEventStart(e) {
+}
 
-        // Touch オブジェクトを取得
-       var touch = touch_list[i];
+function TouchEventMove(e) {    
+}
 
-       // 出力テスト
-       console.log(touch);
-    }
+function TouchEventEnd(e) {
 }
 
 function drawPlayer(x,y,w,h){
     ctx.clearRect(0, 0, screenW, screenH);
     ctx.beginPath();
     ctx.fillRect(x, y, w, h);
+
+    ctx.font = "40px 'ＭＳ Ｐゴシック'";
+    ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);
 }
 
 function render() {
