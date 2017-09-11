@@ -4,6 +4,8 @@ var screenW,screenH;
 var touchX = 0,touchY = 0;
 
 function init(){
+    window.scrollTo(0,0);
+
     var canvas = document.getElementById("canvas");
     
     //画面サイズを取得、反映
@@ -20,22 +22,27 @@ function init(){
     
     //タッチ可能か検出
     var touchStart = ('ontouchstart' in window) ? "touchstart" : "mousedown";
-    var touchMove = ('touchmove' in window) ? "touchmove" : "mousemove";    
+   // var touchMove = ('touchmove' in window) ? "touchmove" : "mousemove";    
     var touchEnd = ('touchend' in window) ? "touchend" : "mouseup";
 
     // // タッチを開始すると実行されるイベント
     document.addEventListener(touchStart,TouchEventStart);
     // タッチしたまま平行移動すると実行されるイベント
-    document.addEventListener(touchmove,TouchEventMove);
+    document.addEventListener("touchmove",TouchEventMove);
     // タッチを終了すると実行されるイベント
-    document.addEventListener(touchend,TouchEventEnd);
+    document.addEventListener(touchEnd,TouchEventEnd);
 }
 
 
 function TouchEventStart(e) {
+    touchX =  event.changedTouches[0].pageX;
+    touchY =  event.changedTouches[0].pageY;
 }
 
-function TouchEventMove(e) {    
+function TouchEventMove(e) {
+    event.preventDefault(); // タッチによる画面スクロールを止める
+    touchX =  event.changedTouches[0].pageX;
+    touchY =  event.changedTouches[0].pageY;
 }
 
 function TouchEventEnd(e) {
