@@ -31,6 +31,8 @@ function init(){
     document.addEventListener("touchmove",TouchEventMove);
     // タッチを終了すると実行されるイベント
     document.addEventListener(touchEnd,TouchEventEnd);
+
+    touchX = screenW / 2;
 }
 
 
@@ -60,5 +62,5 @@ function drawPlayer(x,y,w,h){
 function render() {
     var width = screenW / 4;
     var height = screenH / 25;
-    drawPlayer(screenW / 2 - width / 2,screenH / 10 * 9 - height / 2,width,height);
+    drawPlayer(touchX - width / 10 * 6,screenH / 20 * 17 - height / 2,width,height);
 }
