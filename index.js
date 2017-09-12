@@ -2,6 +2,19 @@ var ctx;
 var screenW,screenH;
 
 var touchX = 0,touchY = 0;
+var player;
+
+var player = {
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+
+    function(){
+
+    }
+};
+
 
 function init(){
     window.scrollTo(0,0);
@@ -13,6 +26,15 @@ function init(){
     screenH = window.innerHeight;
     canvas.width = screenW;
     canvas.height = screenH;
+
+    //各パラメータ初期化
+    touchX = screenW / 2;
+    player.w = screenW / 4;
+    player.h = screenH / 25;
+    player.x = touchX - player.w / 2;
+    player.y = screenH / 20 * 17 - player.h / 2;
+
+    
 
     ctx = canvas.getContext("2d");
     ctx.fillStyle = "#FFFFFF";
@@ -32,7 +54,6 @@ function init(){
     // タッチを終了すると実行されるイベント
     document.addEventListener(touchEnd,TouchEventEnd);
 
-    touchX = screenW / 2;
 }
 
 
@@ -60,7 +81,18 @@ function drawPlayer(x,y,w,h){
 }
 
 function render() {
-    var width = screenW / 4;
-    var height = screenH / 25;
-    drawPlayer(touchX - width / 10 * 6,screenH / 20 * 17 - height / 2,width,height);
+    var adjustTouchX = touchX - player.w / 10 * 6;
+    var dx = adjustTouchX - player.x;
+    var absDx = Math.abs(dx);
+    if (absDx > screenW / 2) {
+        player.x += (dx / 6);
+    } else if(absDx > screenW / 4) {
+        player.x += (dx / 9);        
+    } else if(absDx > screenW / 50) {
+        player.x += (dx / 12);
+    } else if(absDx > screenW / 100) {
+        player.x += (dx / 15);
+    } 
+
+    drawPlayer(player.x,player.y,player.w,player.h);
 }
