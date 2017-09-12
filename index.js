@@ -71,16 +71,10 @@ function TouchEventMove(e) {
 function TouchEventEnd(e) {
 }
 
-function drawPlayer(x,y,w,h){
-    ctx.clearRect(0, 0, screenW, screenH);
-    ctx.beginPath();
-    ctx.fillRect(x, y, w, h);
+function drawPlayer(){
+//    ctx.beginPath();
 
-    ctx.font = "40px 'ＭＳ Ｐゴシック'";
-    ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);
-}
-
-function render() {
+    //プレイヤーの位置を計算
     var adjustTouchX = touchX - player.w / 10 * 6;
     var dx = adjustTouchX - player.x;
     var absDx = Math.abs(dx);
@@ -93,6 +87,15 @@ function render() {
     } else if(absDx > screenW / 100) {
         player.x += (dx / 15);
     } 
+    //プレイヤー描画
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+}
 
-    drawPlayer(player.x,player.y,player.w,player.h);
+function render() {
+    ctx.clearRect(0, 0, screenW, screenH);
+    drawPlayer();
+
+    //デバッグ用 タッチ座標を表示
+    ctx.font = "40px 'ＭＳ Ｐゴシック'";
+    ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);    
 }
