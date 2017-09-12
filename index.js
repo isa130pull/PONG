@@ -91,11 +91,27 @@ function drawPlayer(){
     ctx.fillRect(player.x, player.y, player.w, player.h);
 }
 
+//画面中央の点線描画
+function drawCenterLine(){
+    var num = 15;
+
+    var centerLineW = screenW / (num * 2);
+    var centerLineH = screenH / 100;
+    var centerLineY = screenH / 2 - centerLineH / 2;
+    
+    for(var i=0; i<num; i++) {
+        //点線描画
+        ctx.fillRect(centerLineW / 2 + (i * 2) * centerLineW,centerLineY,centerLineW,centerLineH);
+    }    
+}
+
+
 function render() {
     ctx.clearRect(0, 0, screenW, screenH);
     drawPlayer();
+    drawCenterLine();
 
     //デバッグ用 タッチ座標を表示
-    ctx.font = "40px 'ＭＳ Ｐゴシック'";
-    ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);    
+    //ctx.font = "40px 'ＭＳ Ｐゴシック'";
+    //ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);    
 }
