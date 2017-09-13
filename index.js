@@ -2,18 +2,21 @@ var ctx;
 var screenW,screenH;
 
 var touchX = 0,touchY = 0;
-var player;
 
 var player = {
     x: 0,
     y: 0,
     w: 0,
     h: 0,
-
-    function(){
-
-    }
 };
+
+var enemy = {
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+};
+
 
 
 function init(){
@@ -34,6 +37,10 @@ function init(){
     player.x = touchX - player.w / 2;
     player.y = screenH / 20 * 17 - player.h / 2;
 
+    enemy.w = player.w;
+    enemy.h = player.h;
+    enemy.x = player.x;
+    enemy.y = screenH / 20 * 2 - enemy.h / 2;
     
 
     ctx = canvas.getContext("2d");
@@ -97,7 +104,7 @@ function drawCenterLine(){
 
     var centerLineW = screenW / (num * 2);
     var centerLineH = screenH / 100;
-    var centerLineY = screenH / 2 - centerLineH / 2;
+    var centerLineY = screenH / 40 * 19 - centerLineH / 2;
     
     for(var i=0; i<num; i++) {
         //点線描画
@@ -105,10 +112,17 @@ function drawCenterLine(){
     }    
 }
 
+// 敵プレイヤー描画
+function drawEnemy() {
+    enemy.x = player.x;
+    ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);    
+}
+
 
 function render() {
     ctx.clearRect(0, 0, screenW, screenH);
     drawPlayer();
+    drawEnemy();
     drawCenterLine();
 
     //デバッグ用 タッチ座標を表示
