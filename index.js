@@ -18,6 +18,13 @@ var enemy = {
     point: 0,
 };
 
+var ball = {
+    x: 0,
+    y: 0,
+    dx: 0,
+    dy: 0,
+}
+
 
 
 function init(){
@@ -125,13 +132,21 @@ function drawPoint() {
     ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
 }
 
+function drawBall() {
+    var radius = screenW / 30;
+    ctx.arc(screenW / 2 - radius / 2, screenH / 2 - radius / 2, radius, 0, Math.PI*2, false);
+//    ctx.fill();
+}
+
+
 function render() {
     ctx.clearRect(0, 0, screenW, screenH);
     drawPlayer();
     drawEnemy();
     drawCenterLine();
     drawPoint();
-
+//    drawBall();
+    
     //デバッグ用 タッチ座標を表示
     // ctx.font = "40px Orbitron";
     // ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);    
