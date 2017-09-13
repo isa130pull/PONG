@@ -1,6 +1,5 @@
 var ctx;
 var screenW,screenH;
-
 var touchX = 0,touchY = 0;
 
 var player = {
@@ -8,6 +7,7 @@ var player = {
     y: 0,
     w: 0,
     h: 0,
+    point: 0,
 };
 
 var enemy = {
@@ -15,6 +15,7 @@ var enemy = {
     y: 0,
     w: 0,
     h: 0,
+    point: 0,
 };
 
 
@@ -118,14 +119,20 @@ function drawEnemy() {
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);    
 }
 
+function drawPoint() {
+    ctx.font = "100px Orbitron";
+    ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
+    ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
+}
 
 function render() {
     ctx.clearRect(0, 0, screenW, screenH);
     drawPlayer();
     drawEnemy();
     drawCenterLine();
+    drawPoint();
 
     //デバッグ用 タッチ座標を表示
-    //ctx.font = "40px 'ＭＳ Ｐゴシック'";
-    //ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);    
+    // ctx.font = "40px Orbitron";
+    // ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);    
 }
