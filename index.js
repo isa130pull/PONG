@@ -148,6 +148,7 @@ function drawBall() {
     ball.x += ball.dx;
     ball.y += ball.dy;
 
+    //壁の跳ね返り
     if(ball.x + ball.w >= screenW) {
         ball.x = screenW - ball.w;
         ball.dx = -ball.dx;
@@ -162,6 +163,16 @@ function drawBall() {
     }
     else if(ball.y <= 0) {
         ball.y = 0;
+        ball.dy = -ball.dy;
+    }
+
+    //プレイヤーバーの跳ね返りチェック
+    // 当たり判定
+    if( (player.x <= (ball.x + ball.w) && (player.x + player.w) >= ball.x)
+    &&
+        (player.y <= (ball.y + ball.h) && (player.y + player.h) >= ball.y)
+    ){
+        ball.y = player.y - ball.h;
         ball.dy = -ball.dy;
     }
 
