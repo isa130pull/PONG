@@ -134,8 +134,9 @@ function drawPoint() {
 
 function drawBall() {
     var radius = screenW / 30;
+    ctx.beginPath();
     ctx.arc(screenW / 2 - radius / 2, screenH / 2 - radius / 2, radius, 0, Math.PI*2, false);
-//    ctx.fill();
+    ctx.fill();
 }
 
 
@@ -145,7 +146,7 @@ function render() {
     drawEnemy();
     drawCenterLine();
     drawPoint();
-//    drawBall();
+    drawBall();
     
     //デバッグ用 タッチ座標を表示
     // ctx.font = "40px Orbitron";
