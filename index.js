@@ -21,6 +21,8 @@ var enemy = {
 var ball = {
     x: 0,
     y: 0,
+    w: 0,
+    h: 0,
     dx: 0,
     dy: 0,
 }
@@ -49,6 +51,14 @@ function init(){
     enemy.h = player.h;
     enemy.x = player.x;
     enemy.y = screenH / 20 * 2 - enemy.h / 2;
+
+
+    ball.w = (screenW / 120 + screenH / 120);
+    ball.h = ball.w;
+    ball.x = screenW / 2 - ball.w;
+    ball.y = screenH / 2 - ball.h;
+    ball.dx = screenW / (100 + Math.floor(Math.random() * 101));
+    ball.dy = screenH / (100 + Math.floor(Math.random() * 101));
     
 
     ctx = canvas.getContext("2d");
@@ -126,16 +136,37 @@ function drawEnemy() {
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);    
 }
 
+// 得点を描画
 function drawPoint() {
     ctx.font = "100px Orbitron";
     ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
     ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
 }
 
+// ボールを描画
 function drawBall() {
-    var radius = screenW / 30;
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    if(ball.x + ball.w >= screenW) {
+        ball.x = screenW - ball.w;
+        ball.dx = -ball.dx;
+    }
+    else if(ball.y + ball.h >= screenH) {
+        ball.y = screenH - ball.h;
+        ball.dy = -ball.dy;
+    }
+    else if(ball.x <= 0) {
+        ball.x = 0;
+        ball.dx = -ball.dx;
+    }
+    else if(ball.y <= 0) {
+        ball.y = 0;
+        ball.dy = -ball.dy;
+    }
+
     ctx.beginPath();
-    ctx.arc(screenW / 2 - radius / 2, screenH / 2 - radius / 2, radius, 0, Math.PI*2, false);
+    ctx.arc(ball.x, ball.y, ball.w * 2, 0, Math.PI*2, false);
     ctx.fill();
 }
 
