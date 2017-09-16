@@ -2,6 +2,7 @@ var ctx;
 var screenW,screenH;
 var touchX = 0,touchY = 0;
 var isGame = false;
+var hitAudio = new Audio("http://isa130pull.pepper.jp/pong/hit.mp3");
 
 var player = {
     x: 0,
@@ -35,6 +36,7 @@ var ball = {
 function init(){
     window.scrollTo(0,0);
 
+    hitAudio.load();
     var canvas = document.getElementById("canvas");
     
     //画面サイズを取得、反映
@@ -155,6 +157,8 @@ function drawBall() {
     if(ball.x + ball.w >= screenW) {
         ball.x = screenW - ball.w;
         ball.dx = -ball.dx;
+
+        hitAudio.play();        
     }
     else if(ball.y + ball.h >= screenH) {
         isGame = false;
@@ -166,10 +170,13 @@ function drawBall() {
     else if(ball.x <= 0) {
         ball.x = 0;
         ball.dx = -ball.dx;
+
+        hitAudio.play();        
     }
     else if(ball.y <= 0) {
-        ball.y = 0;
-        ball.dy = -ball.dy;
+        isGame = false;
+        setTimeout(fireBall,1000);
+        player.point++;
     }
 
     //プレイヤーバーの跳ね返りチェック
@@ -185,6 +192,8 @@ function drawBall() {
 
         ball.y = player.y - ball.h;
         ball.dy = -ball.dy;
+
+        hitAudio.play();        
     }
 
     //敵バーの跳ね返りチェック
@@ -195,6 +204,7 @@ function drawBall() {
         ){
             ball.y = enemy.y + enemy.h;
             ball.dy = -ball.dy;
+            hitAudio.play();
     }
     
 
