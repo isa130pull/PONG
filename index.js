@@ -57,13 +57,7 @@ function init(){
 
     ball.w = (screenW / 120 + screenH / 120);
     ball.h = ball.w;
-    ball.x = screenW / 2 - ball.w;
-    ball.y = screenH / 2 - ball.h;
-    ball.dx = screenW / (100 + Math.floor(Math.random() * 101));
-    ball.dy = screenH / (100 + Math.floor(Math.random() * 101));
-    ball.baseDx = ball.dx;
-    ball.baseDy = ball.dy;
-
+    fireBall();
 
     ctx = canvas.getContext("2d");
     ctx.fillStyle = "#FFFFFF";
@@ -84,7 +78,6 @@ function init(){
     document.addEventListener(touchEnd,TouchEventEnd);
 
 }
-
 
 function TouchEventStart(e) {
     touchX =  event.changedTouches[0].pageX;
@@ -201,6 +194,20 @@ function drawBall() {
     ctx.fill();
 }
 
+//ボールを発射
+function fireBall() {
+    ball.x = screenW / 2 - ball.w;
+    ball.y = screenH / 2 - ball.h;
+    ball.dx = screenW / (100 + Math.floor(Math.random() * 101));
+    ball.dy = screenH / (100 + Math.floor(Math.random() * 101));
+
+    //ボールの飛ぶ方角をランダムに
+    ball.dx = Math.random() * 2 >= 1 ? ball.dx : -ball.dx;
+    ball.dy = Math.random() * 2 >= 1 ? ball.dy : -ball.dy;
+    
+    ball.baseDx = Math.abs(ball.dx);
+    ball.baseDy = Math.abs(ball.dy);
+}
 
 
 
