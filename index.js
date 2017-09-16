@@ -177,7 +177,9 @@ function drawBall() {
         (player.y <= (ball.y + ball.h) )
     ){
         //当たった場所によって角度を変える
-
+        var hitXRate = ((ball.x + ball.w) - player.x) / player.w;
+        var cos = Math.PI + (Math.PI * hitXRate);
+        ball.dx = ball.baseDx * Math.cos(cos);
 
         ball.y = player.y - ball.h;
         ball.dy = -ball.dy;
