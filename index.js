@@ -1,6 +1,7 @@
 var ctx;
 var screenW,screenH;
 var touchX = 0,touchY = 0;
+var isGame = false;
 
 var player = {
     x: 0,
@@ -57,13 +58,14 @@ function init(){
 
     ball.w = (screenW / 120 + screenH / 120);
     ball.h = ball.w;
-    fireBall();
 
     ctx = canvas.getContext("2d");
     ctx.fillStyle = "#FFFFFF";
 //    console.log("width= " + screenW + " height= " + screenH);
     //描画タイマー
     setInterval(render,16.6);
+
+    setTimeout(fireBall,1000);
     
     //タッチ可能か検出
     var touchStart = ('ontouchstart' in window) ? "touchstart" : "mousedown";
@@ -129,7 +131,9 @@ function drawCenterLine(){
 
 // 敵プレイヤー描画
 function drawEnemy() {
-    enemy.x = ball.x + ball.w / 2 - player.w / 2;
+    if(isGame) {
+        enemy.x = ball.x + ball.w / 2 - player.w / 2;        
+    }
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);    
 }
 
@@ -142,6 +146,8 @@ function drawPoint() {
 
 // ボールを描画
 function drawBall() {
+    if (!isGame) return;
+
     ball.x += ball.dx;
     ball.y += ball.dy;
 
@@ -151,8 +157,11 @@ function drawBall() {
         ball.dx = -ball.dx;
     }
     else if(ball.y + ball.h >= screenH) {
-        ball.y = screenH - ball.h;
-        ball.dy = -ball.dy;
+        isGame = false;
+        setTimeout(fireBall,1000);
+        enemy.point++;
+        // ball.y = screenH - ball.h;
+        // ball.dy = -ball.dy;
     }
     else if(ball.x <= 0) {
         ball.x = 0;
@@ -196,6 +205,8 @@ function drawBall() {
 
 //ボールを発射
 function fireBall() {
+    isGame = true;
+
     ball.x = screenW / 2 - ball.w;
     ball.y = screenH / 2 - ball.h;
     ball.dx = screenW / (100 + Math.floor(Math.random() * 101));
