@@ -25,6 +25,8 @@ var ball = {
     h: 0,
     dx: 0,
     dy: 0,
+    baseDx: 0,
+    baseDy: 0,
 }
 
 
@@ -59,7 +61,9 @@ function init(){
     ball.y = screenH / 2 - ball.h;
     ball.dx = screenW / (100 + Math.floor(Math.random() * 101));
     ball.dy = screenH / (100 + Math.floor(Math.random() * 101));
-    
+    ball.baseDx = ball.dx;
+    ball.baseDy = ball.dy;
+
 
     ctx = canvas.getContext("2d");
     ctx.fillStyle = "#FFFFFF";
@@ -132,7 +136,7 @@ function drawCenterLine(){
 
 // 敵プレイヤー描画
 function drawEnemy() {
-    enemy.x = player.x;
+    enemy.x = ball.x + ball.w / 2 - player.w / 2;
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);    
 }
 
@@ -170,8 +174,11 @@ function drawBall() {
     // 当たり判定
     if( (player.x <= (ball.x + ball.w) && (player.x + player.w) >= ball.x)
     &&
-        (player.y <= (ball.y + ball.h) && (player.y + player.h) >= ball.y)
+        (player.y <= (ball.y + ball.h) )
     ){
+        //当たった場所によって角度を変える
+
+
         ball.y = player.y - ball.h;
         ball.dy = -ball.dy;
     }
