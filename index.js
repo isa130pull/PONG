@@ -176,10 +176,23 @@ function drawBall() {
         ball.dy = -ball.dy;
     }
 
+    //敵バーの跳ね返りチェック
+    // 当たり判定
+    if( (enemy.x <= (ball.x + ball.w) && (enemy.x + enemy.w) >= ball.x)
+        &&
+        ((enemy.y + enemy.h) >= ball.y)
+        ){
+            ball.y = enemy.y + enemy.h;
+            ball.dy = -ball.dy;
+    }
+    
+
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.w * 2, 0, Math.PI*2, false);
     ctx.fill();
 }
+
+
 
 
 function render() {
