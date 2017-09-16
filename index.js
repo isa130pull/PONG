@@ -2,6 +2,7 @@ var ctx;
 var screenW,screenH;
 var touchX = 0,touchY = 0;
 var isGame = false;
+var isTitle = true;
 var hitAudio = new Audio("http://isa130pull.pepper.jp/pong/hit.mp3");
 
 var player = {
@@ -36,7 +37,6 @@ var ball = {
 function init(){
     window.scrollTo(0,0);
 
-    hitAudio.load();
     var canvas = document.getElementById("canvas");
     
     //画面サイズを取得、反映
@@ -66,8 +66,6 @@ function init(){
 //    console.log("width= " + screenW + " height= " + screenH);
     //描画タイマー
     setInterval(render,16.6);
-
-    setTimeout(fireBall,1000);
     
     //タッチ可能か検出
     var touchStart = ('ontouchstart' in window) ? "touchstart" : "mousedown";
@@ -84,8 +82,15 @@ function init(){
 }
 
 function TouchEventStart(e) {
+    hitAudio.load();
+
     touchX =  event.changedTouches[0].pageX;
     touchY =  event.changedTouches[0].pageY;
+
+    if(isTitle) {
+        isTitle = false;
+        setTimeout(fireBall,1000);
+    }
 }
 
 function TouchEventMove(e) {
@@ -142,9 +147,18 @@ function drawEnemy() {
 // 得点を描画
 function drawPoint() {
     ctx.font = "100px Orbitron";
-    ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
-    ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
+    ctx.fillText(player.point,screenW/30,screenH/ 20 * 11,screenW / 30);
+    ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9,screenW / 30);
 }
+
+function drawTitle() {
+    ctx.font = "100px Orbitron";
+    var text = "Tap Start";
+    var textWidth = ctx.measureText(text);
+//    alert(textWidth);
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 2);
+}
+
 
 // ボールを描画
 function drawBall() {
@@ -158,7 +172,7 @@ function drawBall() {
         ball.x = screenW - ball.w;
         ball.dx = -ball.dx;
 
-        hitAudio.play();        
+        playHitSE();
     }
     else if(ball.y + ball.h >= screenH) {
         isGame = false;
@@ -171,7 +185,7 @@ function drawBall() {
         ball.x = 0;
         ball.dx = -ball.dx;
 
-        hitAudio.play();        
+        playHitSE();
     }
     else if(ball.y <= 0) {
         isGame = false;
@@ -193,7 +207,7 @@ function drawBall() {
         ball.y = player.y - ball.h;
         ball.dy = -ball.dy;
 
-        hitAudio.play();        
+        playHitSE();
     }
 
     //敵バーの跳ね返りチェック
@@ -204,7 +218,7 @@ function drawBall() {
         ){
             ball.y = enemy.y + enemy.h;
             ball.dy = -ball.dy;
-            hitAudio.play();
+            playHitSE();
     }
     
 
@@ -230,10 +244,18 @@ function fireBall() {
     ball.baseDy = Math.abs(ball.dy);
 }
 
+function playHitSE(){
+//    hitAudio.currentTime = 0;
+    hitAudio.play();
+}
 
 
 function render() {
     ctx.clearRect(0, 0, screenW, screenH);
+    if (isTitle) {
+        drawTitle();
+        return;
+    }
     drawPlayer();
     drawEnemy();
     drawCenterLine();
