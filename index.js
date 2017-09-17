@@ -3,7 +3,9 @@ var screenW,screenH;
 var touchX = 0,touchY = 0;
 var isGame = false;
 var isTitle = true;
+var isInitLoad = false;
 var hitAudio = new Audio("http://isa130pull.pepper.jp/pong/hit.mp3");
+var startAudio = new Audio("http://isa130pull.pepper.jp/pong/start.mp3");
 
 var player = {
     x: 0,
@@ -81,17 +83,27 @@ function init(){
     // タッチを終了すると実行されるイベント
     document.addEventListener(touchEnd,TouchEventEnd);
 
+    //フォントの初期読み込みにかかりそうな短い時間
+    setTimeout(function() {
+        isInitLoad = true;
+        ctx.fillStyle = "white";
+    }, 100);
+
 }
 
 function TouchEventStart(e) {
-    hitAudio.load();
 
     touchX =  event.changedTouches[0].pageX;
     touchY =  event.changedTouches[0].pageY;
 
     if(isTitle) {
-        isTitle = false;
-        setTimeout(fireBall,1000);
+        hitAudio.load();
+        startAudio.load();
+        startAudio.play();
+        setTimeout(function(){
+            isTitle = false;
+            setTimeout(fireBall,1000);            
+        },1000);
     }
 }
 
@@ -151,6 +163,7 @@ function drawEnemy() {
 
 // 得点を描画
 function drawPoint() {
+
     ctx.font = "100px Orbitron";
     ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
     ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
@@ -158,10 +171,15 @@ function drawPoint() {
 
 // タイトルを描画
 function drawTitle() {
+    
     ctx.font = "100px Orbitron";
     var text = "Tap Start";
     var textWidth = ctx.measureText(text);
-    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 2);
+    if(!isInitLoad){
+        ctx.fillStyle = "black";
+    }
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 2);        
+    
 }
 
 
@@ -242,7 +260,7 @@ function fireBall() {
     ball.x = screenW / 2 - ball.w;
     ball.y = screenH / 2 - ball.h;
     ball.dx = screenW / (100 + Math.floor(Math.random() * 101));
-    ball.dy = screenH / (100 + Math.floor(Math.random() * 101));
+    ball.dy = screenH / (150 + Math.floor(Math.random() * 101));
 
     //ボールの飛ぶ方角をランダムに
     ball.dx = Math.random() * 2 >= 1 ? ball.dx : -ball.dx;
