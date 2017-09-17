@@ -3,6 +3,7 @@ var screenW,screenH;
 var touchX = 0,touchY = 0;
 var isGame = false;
 var isTitle = true;
+var isLoading = false;
 var isInitLoad = false;
 var hitAudio = new Audio("http://isa130pull.pepper.jp/pong/hit.mp3");
 var startAudio = new Audio("http://isa130pull.pepper.jp/pong/start.mp3");
@@ -98,12 +99,14 @@ function TouchEventStart(e) {
     touchX =  event.changedTouches[0].pageX;
     touchY =  event.changedTouches[0].pageY;
 
-    if(isTitle) {
+    if(isTitle && !isLoading) {
+        isLoading = true;
         hitAudio.load();
         startAudio.load();
         startAudio.play();
         setTimeout(function(){
             isTitle = false;
+            isLoading = false;
             setTimeout(fireBall,1000);            
         },1000);
     }
