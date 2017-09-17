@@ -30,6 +30,7 @@ var ball = {
     dy: 0,
     baseDx: 0,
     baseDy: 0,
+    speed: 0,
 }
 
 
@@ -147,15 +148,15 @@ function drawEnemy() {
 // 得点を描画
 function drawPoint() {
     ctx.font = "100px Orbitron";
-    ctx.fillText(player.point,screenW/30,screenH/ 20 * 11,screenW / 30);
-    ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9,screenW / 30);
+    ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
+    ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
 }
 
+// タイトルを描画
 function drawTitle() {
     ctx.font = "100px Orbitron";
     var text = "Tap Start";
     var textWidth = ctx.measureText(text);
-//    alert(textWidth);
     ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 2);
 }
 
@@ -199,15 +200,16 @@ function drawBall() {
     &&
         (player.y <= (ball.y + ball.h) )
     ){
+        playHitSE();
+        accelBall();
+
         //当たった場所によって角度を変える
-        var hitXRate = ((ball.x + ball.w) - player.x) / player.w;
+        var hitXRate = ((ball.x + (ball.w / 2)) - player.x) / player.w;
         var cos = Math.PI + (Math.PI * hitXRate);
-        ball.dx = ball.baseDx * Math.cos(cos);
+        ball.dx = ball.baseDx * Math.cos(cos) * ball.speed;
 
         ball.y = player.y - ball.h;
-        ball.dy = -ball.dy;
-
-        playHitSE();
+        ball.dy = -Math.abs(ball.baseDy) * ball.speed;
     }
 
     //敵バーの跳ね返りチェック
@@ -216,9 +218,11 @@ function drawBall() {
         &&
         ((enemy.y + enemy.h) >= ball.y)
         ){
+            playHitSE();
+            accelBall();
+
             ball.y = enemy.y + enemy.h;
             ball.dy = -ball.dy;
-            playHitSE();
     }
     
 
@@ -242,11 +246,31 @@ function fireBall() {
     
     ball.baseDx = Math.abs(ball.dx);
     ball.baseDy = Math.abs(ball.dy);
+
+    ball.speed = 1.0;
 }
 
 function playHitSE(){
 //    hitAudio.currentTime = 0;
     hitAudio.play();
+}
+
+function accelBall(){
+    if(ball.speed <= 1.5) {
+        ball.speed += 0.15;
+    }
+    else if(ball.speed <= 2.0) {
+        ball.speed += 0.1;
+    }
+    else if(ball.speed <= 3.0) {
+        ball.speed += 0.05;
+    }
+    else if(ball.speed <= 5.0) {
+        ball.speed += 0.02;
+    } 
+    else {
+        ball.speed += 0.005;
+    }
 }
 
 
