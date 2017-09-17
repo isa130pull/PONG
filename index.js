@@ -220,9 +220,9 @@ function drawBall() {
 
     //プレイヤーバーの跳ね返りチェック
     // 当たり判定
-    if( (player.x <= (ball.x + ball.w) && (player.x + player.w) >= ball.x)
+    if( (player.x <= (ball.x + ball.w) && (player.x + player.w) >= ball.x - ball.w)
     &&
-        (player.y <= (ball.y + ball.h) )
+        (player.y <= (ball.y + ball.h / 2)  && (player.y + player.h) >= ball.y - ball.h)
     &&
         (!player.isHitWait)
     ){
@@ -243,9 +243,9 @@ function drawBall() {
 
     //敵バーの跳ね返りチェック
     // 当たり判定
-    if( (enemy.x <= ball.x + ball.w / 2 && (enemy.x + enemy.w) >= ball.x - ball.w /2)
+    if( (enemy.x <= ball.x + ball.w && (enemy.x + enemy.w) >= ball.x - ball.w)
     &&
-        (enemy.y + enemy.h >= ball.y - ball.h / 2)
+        (enemy.y + enemy.h >= ball.y - ball.h / 2  &&  enemy.y <= ball.y + ball.h / 2)
     &&
         (!enemy.isHitWait)
         ){
