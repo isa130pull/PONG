@@ -288,18 +288,24 @@ function fireBall() {
 
     //初速補正(ポイントが増えるごとに初速が増す)
     var initSpeed = 1.0;
-    var totalPoint = player.point + enemy.point;
+    var totalPoint = player.point * 1.3 + enemy.point;
     if(totalPoint >= 2 && totalPoint < 5) {
         initSpeed = 1.2;
     }
-    else if(totalPoint <= 10) {
+    else if(totalPoint < 10) {
         initSpeed = 1.4;
     }
-    else if(totalPoint <= 15) {
-        initSpeed = 1.5;
+    else if(totalPoint < 15) {
+        initSpeed = 1.6;
     }
-    else if(totalPoint > 15) {
-        initSpeed = 1.7;
+    else if(totalPoint < 20) {
+        initSpeed = 1.8;
+    }
+    else if(totalPoint < 25) {
+        initSpeed = 2.0;
+    }
+    else if(totalPoint >= 25) {
+        initSpeed = 2.2;
     }
 
     ball.dy = (screenH / (120 + Math.floor(Math.random() * 50)) ) * initSpeed;
@@ -313,6 +319,29 @@ function fireBall() {
     ball.baseDy = Math.abs(ball.dy);
 
     ball.speed = 1.0;
+
+    //敵の能力もスコアによって変動    
+    if (totalPoint < 3) {
+        enemy.speed = screenW / 160;        
+    }
+    else if (totalPoint < 6) {
+        enemy.speed = screenW / 140;        
+    }
+    else if (totalPoint < 8) {
+        enemy.speed = screenW / 125;        
+    }
+    else if (totalPoint < 12) {
+        enemy.speed = screenW / 100;        
+    }
+    else if (totalPoint < 16) {
+        enemy.speed = screenW / 90;        
+    }
+    else if (totalPoint < 20) {
+        enemy.speed = screenW / 80;        
+    }
+    else{
+        enemy.speed = screenW / 75;        
+    }
 }
 
 function playHitSE(){
