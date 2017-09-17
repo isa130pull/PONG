@@ -13,6 +13,7 @@ var player = {
     w: 0,
     h: 0,
     point: 0,
+    isHitWait: false,
 };
 
 var enemy = {
@@ -22,6 +23,7 @@ var enemy = {
     h: 0,
     point: 0,
     speed: 0,
+    isHitWait: false,
 };
 
 var ball = {
@@ -153,7 +155,7 @@ function drawCenterLine(){
 // 敵プレイヤー描画
 function drawEnemy() {
     if(isGame) {
-        enemy.x = (enemy.x + enemy.w / 2 < ball.x + ball.w / 2) ? enemy.x + enemy.speed : enemy.x - enemy.speed;       
+        enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed : enemy.x - enemy.speed;       
         if (Math.abs( (enemy.x + enemy.w / 2) - ball.x) < enemy.speed) {
             enemy.x = ball.x + ball.w / 2 - enemy.w / 2; 
         }
@@ -221,6 +223,8 @@ function drawBall() {
     if( (player.x <= (ball.x + ball.w) && (player.x + player.w) >= ball.x)
     &&
         (player.y <= (ball.y + ball.h) )
+    &&
+        (!player.isHitWait)
     ){
         playHitSE();
         accelBall();
@@ -229,22 +233,30 @@ function drawBall() {
         var hitXRate = ((ball.x + (ball.w / 2)) - player.x) / player.w;
         var cos = Math.PI + (Math.PI * hitXRate);
         ball.dx = ball.baseDx * Math.cos(cos) * ball.speed;
-
-        ball.y = player.y - ball.h;
         ball.dy = -Math.abs(ball.baseDy) * ball.speed;
+
+        player.isHitWait = true;
+        setTimeout(function(){
+            player.isHitWait = false;
+        },100);
     }
 
     //敵バーの跳ね返りチェック
     // 当たり判定
-    if( (enemy.x <= (ball.x + ball.w) && (enemy.x + enemy.w) >= ball.x)
-        &&
-        ((enemy.y + enemy.h) >= ball.y)
+    if( (enemy.x <= ball.x + ball.w / 2 && (enemy.x + enemy.w) >= ball.x - ball.w /2)
+    &&
+        (enemy.y + enemy.h >= ball.y - ball.h / 2)
+    &&
+        (!enemy.isHitWait)
         ){
             playHitSE();
             accelBall();
-
-            ball.y = enemy.y + enemy.h;
             ball.dy = -ball.dy;
+
+            enemy.isHitWait = true;
+            setTimeout(function(){
+                enemy.isHitWait = false;
+            },100);
     }
     
 
