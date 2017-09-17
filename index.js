@@ -155,9 +155,22 @@ function drawCenterLine(){
 // 敵プレイヤー描画
 function drawEnemy() {
     if(isGame) {
-        enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed : enemy.x - enemy.speed;       
+        enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
         if (Math.abs( (enemy.x + enemy.w / 2) - ball.x) < enemy.speed) {
             enemy.x = ball.x + ball.w / 2 - enemy.w / 2; 
+        }
+        else {
+            enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
+        }
+    }
+    else {
+        // ボールが発射されるまでは画面中央に布陣させる
+        enemy.x = (enemy.x + enemy.w / 2 < screenW / 2) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;
+        if (Math.abs( (enemy.x + enemy.w / 2) - screenW) < enemy.speed) {
+            enemy.x = screenW - enemy.w / 2; 
+        }
+        else {
+            enemy.x = (enemy.x + enemy.w / 2 < screenW / 2) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
         }
     }
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);    
@@ -199,12 +212,11 @@ function drawBall() {
 
         playHitSE();
     }
+    //プレイヤーポイント
     else if(ball.y + ball.h >= screenH) {
         isGame = false;
         setTimeout(fireBall,1000);
         enemy.point++;
-        // ball.y = screenH - ball.h;
-        // ball.dy = -ball.dy;
     }
     else if(ball.x <= 0) {
         ball.x = 0;
@@ -212,6 +224,7 @@ function drawBall() {
 
         playHitSE();
     }
+    //敵ポイント
     else if(ball.y <= 0) {
         isGame = false;
         setTimeout(fireBall,1000);
