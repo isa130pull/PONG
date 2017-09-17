@@ -189,15 +189,19 @@ function drawPoint() {
 
 // タイトルを描画
 function drawTitle() {
-    
-    ctx.font = "100px Orbitron";
-    var text = "Tap Start";
-    var textWidth = ctx.measureText(text);
     if(!isInitLoad){
         ctx.fillStyle = "black";
     }
-    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 2);        
     
+    ctx.font = "80px Orbitron";
+    var text = "Tap Start";
+    var textWidth = ctx.measureText(text);
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 1.5);
+
+    ctx.font = "160px Orbitron";
+    text = "POPONG";
+    textWidth = ctx.measureText(text);
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 3);
 }
 
 
