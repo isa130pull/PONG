@@ -19,6 +19,7 @@ var enemy = {
     w: 0,
     h: 0,
     point: 0,
+    speed: 0,
 };
 
 var ball = {
@@ -57,7 +58,7 @@ function init(){
     enemy.h = player.h;
     enemy.x = player.x;
     enemy.y = screenH / 20 * 2 - enemy.h / 2;
-
+    enemy.speed = screenW / 100;
 
     ball.w = (screenW / 120 + screenH / 120);
     ball.h = ball.w;
@@ -140,7 +141,10 @@ function drawCenterLine(){
 // 敵プレイヤー描画
 function drawEnemy() {
     if(isGame) {
-        enemy.x = ball.x + ball.w / 2 - player.w / 2;        
+        enemy.x = (enemy.x + enemy.w / 2 < ball.x + ball.w / 2) ? enemy.x + enemy.speed : enemy.x - enemy.speed;       
+        if (Math.abs( (enemy.x + enemy.w / 2) - ball.x) < enemy.speed) {
+            enemy.x = ball.x + ball.w / 2 - enemy.w / 2; 
+        }
     }
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);    
 }
