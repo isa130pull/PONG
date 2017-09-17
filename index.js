@@ -8,6 +8,7 @@ var isInitLoad = false;
 var hitAudio = new Audio("http://isa130pull.pepper.jp/pong/hit.mp3");
 var startAudio = new Audio("http://isa130pull.pepper.jp/pong/start.mp3");
 var isMute = true;
+var isPlayerPrePoint = false; //一つ前にプレイヤーがポイントを取ったかどうかのフラグ
 
 var player = {
     x: 0,
@@ -222,11 +223,12 @@ function drawBall() {
 
         playHitSE();
     }
-    //プレイヤーポイント
+    //敵ポイント
     else if(ball.y + ball.h >= screenH) {
         isGame = false;
         setTimeout(fireBall,1000);
         enemy.point++;
+        isPlayerPrePoint = false;
     }
     else if(ball.x <= 0) {
         ball.x = 0;
@@ -234,11 +236,12 @@ function drawBall() {
 
         playHitSE();
     }
-    //敵ポイント
+    //プレイヤーポイント
     else if(ball.y <= 0) {
         isGame = false;
         setTimeout(fireBall,1000);
         player.point++;
+        isPlayerPrePoint = true;
     }
 
     //プレイヤーバーの跳ね返りチェック
@@ -321,9 +324,11 @@ function fireBall() {
     ball.dy = (screenH / (120 + Math.floor(Math.random() * 50)) ) * initSpeed;
 
 
-    //ボールの飛ぶ方角をランダムに
+    //ボールの飛ぶ方向をX方向はランダムに
     ball.dx = Math.random() * 2 >= 1 ? ball.dx : -ball.dx;
-    ball.dy = Math.random() * 2 >= 1 ? ball.dy : -ball.dy;
+
+    //Y方向は前回ポイントを取った方(初回は必ず敵)
+    ball.dy = isPlayerPrePoint ? ball.dy : -ball.dy;
     
     ball.baseDx = Math.abs(ball.dx);
     ball.baseDy = Math.abs(ball.dy);
