@@ -7,6 +7,7 @@ var isLoading = false;
 var isInitLoad = false;
 var hitAudio = new Audio("http://isa130pull.pepper.jp/pong/hit.mp3");
 var startAudio = new Audio("http://isa130pull.pepper.jp/pong/start.mp3");
+var isMute = true;
 
 var player = {
     x: 0,
@@ -101,9 +102,11 @@ function TouchEventStart(e) {
 
     if(isTitle && !isLoading) {
         isLoading = true;
-        hitAudio.load();
-        startAudio.load();
-        startAudio.play();
+        if (!isMute) {
+            hitAudio.load();
+            startAudio.load();
+            startAudio.play();    
+        }
         setTimeout(function(){
             isTitle = false;
             isLoading = false;
@@ -352,8 +355,9 @@ function fireBall() {
 }
 
 function playHitSE(){
-//    hitAudio.currentTime = 0;
-    hitAudio.play();
+    if (!isMute){
+        hitAudio.play();        
+    }
 }
 
 function accelBall(){
