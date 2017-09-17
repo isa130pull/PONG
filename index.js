@@ -335,27 +335,33 @@ function fireBall() {
 
     ball.speed = 1.0;
 
+    var hdp = 0;
+    if (player.point - enemy.point >= 2) hdp = -10;
+    else if (player.point - enemy.point >= 3) hdp = -20;    
+    else if(enemy.point - player.point >= 2) hdp = 20;
+    else if(enemy.point - player.point >= 4) hdp = 30;
+    
     //敵の能力もスコアによって変動    
     if (totalPoint < 3) {
-        enemy.speed = screenW / 160;        
+        enemy.speed = screenW / (160 + hdp);
     }
     else if (totalPoint < 6) {
-        enemy.speed = screenW / 140;        
+        enemy.speed = screenW / (140 + hdp);        
     }
     else if (totalPoint < 8) {
-        enemy.speed = screenW / 125;        
+        enemy.speed = screenW / (125 + hdp);        
     }
     else if (totalPoint < 12) {
-        enemy.speed = screenW / 100;        
+        enemy.speed = screenW / (100 + hdp);        
     }
     else if (totalPoint < 16) {
-        enemy.speed = screenW / 90;        
+        enemy.speed = screenW / (90 + hdp);        
     }
     else if (totalPoint < 20) {
-        enemy.speed = screenW / 80;        
+        enemy.speed = screenW / (80 + hdp);        
     }
     else{
-        enemy.speed = screenW / 75;        
+        enemy.speed = screenW / (75 + hdp);        
     }
 }
 
