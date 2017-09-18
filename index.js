@@ -74,7 +74,13 @@ function init(){
     ctx.fillStyle = "#FFFFFF";
 //    console.log("width= " + screenW + " height= " + screenH);
     //描画タイマー
-    setInterval(render,16.6);
+    var requestAnimationFrame = window.requestAnimationFrame ||
+    　　　　　　　　　　　　　　　　　　　window.mozRequestAnimationFrame ||
+                                  　window.webkitRequestAnimationFrame ||
+    　　　　　　　　　　　　　　　　　　　window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
+    window.requestAnimationFrame(render);
+//    setInterval(render,16.6);
     
     //タッチ可能か検出
     var touchStart = ('ontouchstart' in window) ? "touchstart" : "mousedown";
