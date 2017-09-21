@@ -9,6 +9,8 @@ var hitAudio = new Audio("http://isa130pull.pepper.jp/pong/hit.mp3");
 var startAudio = new Audio("http://isa130pull.pepper.jp/pong/start.mp3");
 var isMute = true;
 var isPlayerPrePoint = false; //一つ前にプレイヤーがポイントを取ったかどうかのフラグ
+var isGameOver = false;
+var isGameClear = false;
 
 var player = {
     x: 0,
@@ -54,25 +56,10 @@ function init(){
     canvas.width = screenW;
     canvas.height = screenH;
 
-    //各パラメータ初期化
-    touchX = screenW / 2;
-    player.w = screenW / 4;
-    player.h = screenH / 25;
-    player.x = touchX - player.w / 2;
-    player.y = screenH / 20 * 17 - player.h / 2;
-
-    enemy.w = player.w;
-    enemy.h = player.h;
-    enemy.x = player.x;
-    enemy.y = screenH / 20 * 2 - enemy.h / 2;
-    enemy.speed = screenW / 100;
-
-    ball.w = (screenW / 120 + screenH / 120);
-    ball.h = ball.w;
+    initParam();
 
     ctx = canvas.getContext("2d");
     ctx.fillStyle = "#FFFFFF";
-//    console.log("width= " + screenW + " height= " + screenH);
     //描画タイマー
     var requestAnimationFrame = window.requestAnimationFrame ||
     　　　　　　　　　　　　　　　　　　　window.mozRequestAnimationFrame ||
@@ -117,6 +104,7 @@ function TouchEventStart(e) {
         setTimeout(function(){
             isTitle = false;
             isLoading = false;
+            initParam();
             setTimeout(fireBall,1000);            
         },1000);
     }
@@ -191,7 +179,6 @@ function drawEnemy() {
 
 // 得点を描画
 function drawPoint() {
-
     ctx.font = "100px Orbitron";
     ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
     ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
@@ -237,9 +224,18 @@ function drawBall() {
     //敵ポイント
     else if(ball.y + ball.h >= screenH) {
         isGame = false;
-        setTimeout(fireBall,1000);
-        enemy.point++;
         isPlayerPrePoint = false;
+
+        if(++enemy.point >= 7) {
+            isGameOver = true;
+            setTimeout(function(){
+                isTitle = true;
+            },5000);
+        }
+        else {
+            setTimeout(fireBall,1000);            
+        }
+
     }
     else if(ball.x <= 0) {
         ball.x = 0;
@@ -412,8 +408,49 @@ function render() {
     drawCenterLine();
     drawPoint();
     drawBall();
+    drawGameOver();
     
     //デバッグ用 タッチ座標を表示
     // ctx.font = "40px Orbitron";
     // ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);    
+}
+
+var gameOverStrY = 0;
+function drawGameOver() {
+    if(!isGameOver) return;
+
+    gameOverStrY += 4;
+    if (gameOverStrY > screenH / 3) {
+        gameOverStrY = screenH / 3;
+    }
+    ctx.font = "120px Orbitron";
+    var text = "GAME OVER";
+    var textWidth = ctx.measureText(text);
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,gameOverStrY);
+
+}
+
+function initParam(){
+    //各パラメータ初期化
+    touchX = screenW / 2;
+    player.w = screenW / 4;
+    player.h = screenH / 25;
+    player.x = touchX - player.w / 2;
+    player.y = screenH / 20 * 17 - player.h / 2;
+    player.point = 0;
+
+    enemy.w = player.w;
+    enemy.h = player.h;
+    enemy.x = player.x;
+    enemy.y = screenH / 20 * 2 - enemy.h / 2;
+    enemy.speed = screenW / 100;
+    enemy.point = 0;
+
+    ball.w = (screenW / 120 + screenH / 120);
+    ball.h = ball.w;
+
+    gameOverStrY = -screenH / 10;
+
+    isGameOver = false;
+    isGameClear = false;
 }
