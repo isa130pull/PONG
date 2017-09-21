@@ -180,8 +180,13 @@ function drawEnemy() {
 // 得点を描画
 function drawPoint() {
     ctx.font = "100px Orbitron";
+    
+    if (player.point >= 6) ctx.fillStyle = "#FFFF00";
     ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
+    ctx.fillStyle = "#FFFFFF";
+    if (enemy.point >= 6) ctx.fillStyle = "#FFFF00";    
     ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
+    ctx.fillStyle = "#FFFFFF";
 }
 
 // タイトルを描画
@@ -252,7 +257,7 @@ function drawBall() {
             isGameClear = true;
             setTimeout(function(){
                 isTitle = true;
-            },5000);
+            },7500);
         }
         else {
             setTimeout(fireBall,1000);            
@@ -437,7 +442,7 @@ function drawGameOver() {
     var text = "GAME OVER";
     var textWidth = ctx.measureText(text);
     ctx.fillText(text,screenW/2 - textWidth.width / 2 ,gameEndStrY);
-
+    
 }
 
 function drawGameClear() {
