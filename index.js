@@ -79,8 +79,8 @@ function init(){
                                   　window.webkitRequestAnimationFrame ||
     　　　　　　　　　　　　　　　　　　　window.msRequestAnimationFrame;
     window.requestAnimationFrame = requestAnimationFrame;
-    window.requestAnimationFrame(render);
-//    setInterval(render,16.6);
+//    window.requestAnimationFrame(render);
+    setInterval(render,16.6);
     
     //タッチ可能か検出
     var touchStart = ('ontouchstart' in window) ? "touchstart" : "mousedown";
@@ -198,15 +198,20 @@ function drawPoint() {
 }
 
 // タイトルを描画
+var titleAnimeFlags = 0;
 function drawTitle() {
     if(!isInitLoad){
         ctx.fillStyle = "black";
     }
     
-    ctx.font = "80px Orbitron";
-    var text = "Tap Start";
-    var textWidth = ctx.measureText(text);
-    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 1.5);
+    //Tap Startの文字を点滅させる
+    titleAnimeFlags++;
+    if(titleAnimeFlags % 100 < 50) {
+        ctx.font = "80px Orbitron";
+        var text = "Tap Start";
+        var textWidth = ctx.measureText(text);
+        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 1.5);    
+    }
 
     ctx.font = "160px Orbitron";
     text = "POPONG";
