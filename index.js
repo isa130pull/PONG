@@ -246,9 +246,18 @@ function drawBall() {
     //プレイヤーポイント
     else if(ball.y <= 0) {
         isGame = false;
-        setTimeout(fireBall,1000);
-        player.point++;
         isPlayerPrePoint = true;
+        
+        if(++player.point >= 7) {
+            isGameClear = true;
+            setTimeout(function(){
+                isTitle = true;
+            },5000);
+        }
+        else {
+            setTimeout(fireBall,1000);            
+        }
+
     }
 
     //プレイヤーバーの跳ね返りチェック
@@ -409,26 +418,42 @@ function render() {
     drawPoint();
     drawBall();
     drawGameOver();
+    drawGameClear();
     
     //デバッグ用 タッチ座標を表示
     // ctx.font = "40px Orbitron";
     // ctx.fillText("touchpoint...x=" + touchX + "  y=" + touchY,screenW / 3, screenH / 8);    
 }
 
-var gameOverStrY = 0;
+var gameEndStrY = 0;
 function drawGameOver() {
     if(!isGameOver) return;
 
-    gameOverStrY += 4;
-    if (gameOverStrY > screenH / 3) {
-        gameOverStrY = screenH / 3;
+    gameEndStrY += 4;
+    if (gameEndStrY > screenH / 3) {
+        gameEndStrY = screenH / 3;
     }
     ctx.font = "120px Orbitron";
     var text = "GAME OVER";
     var textWidth = ctx.measureText(text);
-    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,gameOverStrY);
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,gameEndStrY);
 
 }
+
+function drawGameClear() {
+    if(!isGameClear) return;
+
+    gameEndStrY += 4;
+    if (gameEndStrY > screenH / 3) {
+        gameEndStrY = screenH / 3;
+    }
+    ctx.font = "120px Orbitron";
+    var text = "GAME CLEAR";
+    var textWidth = ctx.measureText(text);
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,gameEndStrY);
+
+}
+
 
 function initParam(){
     //各パラメータ初期化
@@ -449,7 +474,7 @@ function initParam(){
     ball.w = (screenW / 120 + screenH / 120);
     ball.h = ball.w;
 
-    gameOverStrY = -screenH / 10;
+    gameEndStrY = - screenH / 10;
 
     isGameOver = false;
     isGameClear = false;
