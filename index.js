@@ -198,7 +198,8 @@ function drawTitle() {
     
     //Tap Startの文字を点滅させる
     titleAnimeFlags++;
-    if(titleAnimeFlags % 100 < 50) {
+    var flashTime = isLoading ? 10 : 100;
+    if(titleAnimeFlags % flashTime < flashTime/2 ) {
         ctx.font = "80px Orbitron";
         var text = "Tap Start";
         var textWidth = ctx.measureText(text);
