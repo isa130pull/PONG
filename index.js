@@ -11,6 +11,8 @@ var isMute = true;
 var isPlayerPrePoint = false; //一つ前にプレイヤーがポイントを取ったかどうかのフラグ
 var isGameOver = false;
 var isGameClear = false;
+var isStageSelect = false;
+var difficult = 0; // 0..NORMAL,1..HARD
 
 var player = {
     x: 0,
@@ -96,18 +98,43 @@ function TouchEventStart(e) {
 
     if(isTitle && !isLoading) {
         isLoading = true;
+        //オーディオの読み込み(現在未使用)
         if (!isMute) {
             hitAudio.load();
             startAudio.load();
-            startAudio.play();    
         }
         setTimeout(function(){
             isTitle = false;
             isLoading = false;
-            initParam();
-            setTimeout(fireBall,1000);            
+            isStageSelect = true;
         },1000);
     }
+    else if(isStageSelect) {
+        //難易度NORMALでSTART
+        if (touchY >= screenH / 20 * 7 && touchY <= screenH / 20 * 9) {
+            isLoading = true;
+            difficult = 0;
+            setTimeout(function(){
+                isLoading = false;
+                isStageSelect = false;
+                initParam();
+                setTimeout(fireBall,1000);    
+            },1000);
+        }
+        //難易度NORMALでHARD
+        else if (touchY >= screenH / 20 * 13 && touchY <= screenH / 20 * 15) {
+            isLoading = true;
+            difficult = 1;
+            setTimeout(function(){
+                isLoading = false;
+                isStageSelect = false;
+                initParam();
+                setTimeout(fireBall,1000);    
+            },1000);
+        }
+
+    }
+
 }
 
 function TouchEventMove(e) {
@@ -192,17 +219,16 @@ function drawPoint() {
 // タイトルを描画
 var titleAnimeFlags = 0;
 function drawTitle() {
-    if(!isInitLoad){
-        ctx.fillStyle = "black";
-    }
+    if(!isInitLoad) ctx.fillStyle = "black";
     
     //Tap Startの文字を点滅させる
     titleAnimeFlags++;
     var flashTime = isLoading ? 10 : 100;
+    ctx.font = "80px Orbitron";
+    var text = "Tap Start";
+    var textWidth = ctx.measureText(text);
+
     if(titleAnimeFlags % flashTime < flashTime/2 ) {
-        ctx.font = "80px Orbitron";
-        var text = "Tap Start";
-        var textWidth = ctx.measureText(text);
         ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 1.5);    
     }
 
@@ -210,6 +236,39 @@ function drawTitle() {
     text = "POPONG";
     textWidth = ctx.measureText(text);
     ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 3);
+}
+
+// ステージセレクト画面
+function drawStageSelect() {
+    if(!isStageSelect) return;
+
+    ctx.font = "60px Orbitron";
+    var text = "SELECT DIFFICULTY";
+    var textWidth = ctx.measureText(text);
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 2);
+
+    titleAnimeFlags++;
+
+    ctx.font = "120px Orbitron";
+
+    text = "NORMAL";
+    textWidth = ctx.measureText(text);
+
+    if(!isLoading || difficult == 1 || titleAnimeFlags % 10 < 5 ) 
+        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 4);
+
+    text = "HARD";
+    textWidth = ctx.measureText(text);
+
+    if(!isLoading || difficult == 0 || titleAnimeFlags % 10 < 5 ) 
+        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 7);
+
+    ctx.font = "70px Orbitron";
+    text = "7 POINTS WIN";
+    textWidth = ctx.measureText(text);
+    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 9);
+
+
 }
 
 
@@ -425,6 +484,11 @@ function render() {
         drawTitle();
         return;
     }
+    else if(isStageSelect) {
+        drawStageSelect();
+        return;
+    }
+
     drawPlayer();
     drawEnemy();
     drawCenterLine();
