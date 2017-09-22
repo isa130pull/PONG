@@ -319,30 +319,37 @@ function fireBall() {
 
     ball.x = screenW / 2 - ball.w;
     ball.y = screenH / 2 - ball.h;
-    ball.dx = screenW / (50 + Math.floor(Math.random() * 150));
 
     //初速補正(ポイントが増えるごとに初速が増す)
     var initSpeed = 1.0;
+    var initRange = 80;
     var totalPoint = player.point * 1.3 + enemy.point;
     if(totalPoint >= 2 && totalPoint < 5) {
         initSpeed = 1.2;
+        initRange = 70;
+    }
+    else if(totalPoint < 7) {
+        initSpeed = 1.4;
+        initRange = 60;
     }
     else if(totalPoint < 10) {
-        initSpeed = 1.4;
+        initSpeed = 1.6;
+        initRange = 50;
+    }
+    else if(totalPoint < 12) {
+        initSpeed = 1.8;
+        initRange = 40;
     }
     else if(totalPoint < 15) {
-        initSpeed = 1.6;
-    }
-    else if(totalPoint < 20) {
-        initSpeed = 1.8;
-    }
-    else if(totalPoint < 25) {
         initSpeed = 2.0;
+        initRange = 30;
     }
-    else if(totalPoint >= 25) {
+    else if(totalPoint >= 15) {
         initSpeed = 2.2;
+        initRange = 25;
     }
 
+    ball.dx = screenW / (initRange + Math.floor(Math.random() * (initRange*3) ));
     ball.dy = (screenH / (120 + Math.floor(Math.random() * 50)) ) * initSpeed;
 
 
