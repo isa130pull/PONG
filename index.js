@@ -42,6 +42,7 @@ var ball = {
     dy: 0,
     baseDx: 0,
     baseDy: 0,
+    baseSpeed: 0,
     speed: 0,
 }
 
@@ -337,10 +338,12 @@ function drawBall() {
         accelBall();
 
         //当たった場所によって角度を変える
-        var hitXRate = ((ball.x + (ball.w / 2)) - player.x) / player.w;
-        var cos = Math.PI + (Math.PI * hitXRate);
-        ball.dx = ball.baseDx * Math.cos(cos) * ball.speed;
-        ball.dy = -Math.abs(ball.baseDy) * ball.speed;
+        var hitXRate = (((ball.x + (ball.w / 2)) - player.x) / player.w) / 2;
+
+        //rad 1.25〜1.75の範囲
+        var rad = Math.PI * 1.25 + (Math.PI * hitXRate);
+        ball.dx = ball.baseSpeed * Math.cos(rad) * ball.speed;
+        ball.dy = ball.baseSpeed * Math.sin(rad) * ball.speed;
 
         player.isHitWait = true;
         setTimeout(function(){
@@ -358,8 +361,8 @@ function drawBall() {
         ){
             playHitSE();
             accelBall();
+            
             ball.dy = -ball.dy;
-
             enemy.isHitWait = true;
             setTimeout(function(){
                 enemy.isHitWait = false;
@@ -466,6 +469,8 @@ function fireBall() {
     
     ball.baseDx = Math.abs(ball.dx);
     ball.baseDy = Math.abs(ball.dy);
+
+    ball.baseSpeed = Math.sqrt(Math.pow(Math.abs(ball.dx),2) + Math.pow(Math.abs(ball.dy),2));
 
     ball.speed = 1.0;
     
