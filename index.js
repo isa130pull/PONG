@@ -15,6 +15,8 @@ var isStageSelect = false;
 var difficult = 0; // 0..NORMAL,1..HARD
 var isNormalCleared = false;
 var isHardCleared = false;
+var flashTimes = 0;
+
 
 var player = {
     x: 0,
@@ -121,7 +123,7 @@ function TouchEventStart(e) {
                 isLoading = false;
                 isStageSelect = false;
                 initParam();
-                setTimeout(fireBall,1000);    
+                setTimeout(fireBall,3000);    
             },1000);
         }
         //難易度NORMALでHARD
@@ -132,7 +134,7 @@ function TouchEventStart(e) {
                 isLoading = false;
                 isStageSelect = false;
                 initParam();
-                setTimeout(fireBall,1000);    
+                setTimeout(fireBall,3000);    
             },1000);
         }
 
@@ -242,33 +244,44 @@ function moveEnemyCenter() {
 // 得点を描画
 function drawPoint() {
     ctx.font = "100px Orbitron";
-    
-    if (player.point >= 6) ctx.fillStyle = "#FFFF00";
-    ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
-    ctx.fillStyle = "#FFFFFF";
-    if (enemy.point >= 6) ctx.fillStyle = "#FFFF00";    
-    ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
-    ctx.fillStyle = "#FFFFFF";
+
+    if (isPlayerPrePoint && !isGame && flashTimes % 20 < 10){}
+    else {
+        if (player.point >= 6) ctx.fillStyle = "#FFFF00";
+        ctx.fillText(player.point,screenW/30,screenH/ 20 * 11);
+        ctx.fillStyle = "#FFFFFF";    
+    }
+    if (!isPlayerPrePoint && !isGame && flashTimes % 20 < 10 && enemy.point != 0){}
+    else {
+        if (enemy.point >= 6) ctx.fillStyle = "#FFFF00";    
+        ctx.fillText(enemy.point,screenW/30,screenH/ 20 * 9);
+        ctx.fillStyle = "#FFFFFF";
+    }
+
+    //最初のみ説明を表示
+    if (!isGame && player.point + enemy.point == 0) {
+        var text = "7 POINTS WIN";
+        var textWidth = ctx.measureText(text);
+        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 20 * 7);    
+    }
 }
 
 // タイトルを描画
-var titleAnimeFlags = 0;
 function drawTitle() {
     if(!isInitLoad) ctx.fillStyle = "black";
     
     //Tap Startの文字を点滅させる
-    titleAnimeFlags++;
     var flashTime = isLoading ? 10 : 100;
     ctx.font = "80px Orbitron";
     var text = "Tap Start";
     var textWidth = ctx.measureText(text);
 
-    if(titleAnimeFlags % flashTime < flashTime/2 ) {
+    if(flashTimes % flashTime < flashTime/2 ) {
         ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 1.5);    
     }
 
     ctx.font = "160px Orbitron";
-    text = "POPONG";
+    text = (isNormalCleared && isHardCleared) ? "DESHI" : "POPONG";
     textWidth = ctx.measureText(text);
     ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 3);
 }
@@ -282,14 +295,12 @@ function drawStageSelect() {
     var textWidth = ctx.measureText(text);
     ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 2);
 
-    titleAnimeFlags++;
-
     ctx.font = "120px Orbitron";
 
     text = "NORMAL";
     textWidth = ctx.measureText(text);
 
-    if(!isLoading || difficult == 1 || titleAnimeFlags % 10 < 5 ) {
+    if(!isLoading || difficult == 1 || flashTimes % 10 < 5 ) {
         if(isNormalCleared) ctx.fillStyle = "#FFFF00";
         ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 20 * 9);        
     }
@@ -297,17 +308,12 @@ function drawStageSelect() {
     text = "HARD";
     textWidth = ctx.measureText(text);
 
-    if(!isLoading || difficult == 0 || titleAnimeFlags % 10 < 5 ) {
+    if(!isLoading || difficult == 0 || flashTimes % 10 < 5 ) {
         if(isHardCleared) ctx.fillStyle = "#FFFF00";        
         ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 20 * 13);
     }
+
     ctx.fillStyle = "#FFFFFF";
-    ctx.font = "70px Orbitron";
-    text = "7 POINTS WIN";
-    textWidth = ctx.measureText(text);
-    ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 9);
-
-
 }
 
 
@@ -555,6 +561,8 @@ function accelBall(){
 
 function render() {
     ctx.clearRect(0, 0, screenW, screenH);
+    flashTimes++;    
+
     if (isTitle) {
         drawTitle();
         return;
@@ -600,7 +608,7 @@ function drawGameClear() {
         gameEndStrY = screenH / 3;
     }
     ctx.font = "120px Orbitron";
-    var text = difficult == 0 ? "GAME CLEAR!!" : "DESHI!!";
+    var text  = "GAME CLEAR!!";
     var textWidth = ctx.measureText(text);
     ctx.fillText(text,screenW/2 - textWidth.width / 2 ,gameEndStrY);
 
@@ -633,4 +641,5 @@ function initParam(){
     isGameClear = false;
 
     isPlayerPrePoint = false;
+    flashTimes = 0;
 }
