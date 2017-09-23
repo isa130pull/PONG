@@ -40,10 +40,9 @@ var ball = {
     h: 0,
     dx: 0,
     dy: 0,
-    baseDx: 0,
-    baseDy: 0,
     baseSpeed: 0,
     speed: 0,
+    rad: 0,
 }
 
 
@@ -185,31 +184,45 @@ function drawCenterLine(){
 // 敵プレイヤー描画
 function drawEnemy() {
     if(isGame) {
-        //敵移動速度分移動させる
-        enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2; 
-        if (Math.abs( (enemy.x + enemy.w / 2) - ball.x) < enemy.speed) {            
-            enemy.x = ball.x + ball.w / 2 - enemy.w / 2; 
+        //味方陣地エリアにボールがあり、角度が大きくついている場合は中央付近に移動させる
+        if ( (ball.rad <= 1.35 || ball.rad >= 1.65) && ball.y > screenH / 10 * 7){
+            moveEnemyCenter();
         }
         else {
-            enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
+            //ボールの速度より遅い移動速度であれば若干加速させる
+            var adjustEnemySpeed = enemy.speed < Math.abs(ball.dx) ? enemy.speed * 1.1 : enemy.speed;
+            
+            //敵移動速度分移動させる
+            enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + adjustEnemySpeed / 2 : enemy.x - adjustEnemySpeed / 2; 
+            if (Math.abs( (enemy.x + enemy.w / 2) - ball.x) < adjustEnemySpeed) {            
+                enemy.x = ball.x + ball.w / 2 - enemy.w / 2; 
+            }
+            else {
+                enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + adjustEnemySpeed / 2 : enemy.x - adjustEnemySpeed / 2;            
+            }
+            //画面外に出ないように
+            if(enemy.x < 0) enemy.x = 0;
+            else if(enemy.x + enemy.w > screenW) enemy.x = screenW - enemy.w;
         }
-
-        //画面外に出ないよう
-        if(enemy.x < 0) enemy.x = 0;
-        else if(enemy.x + enemy.w > screenW) enemy.x = screenW - enemy.w;
     }
     else {
-        // ボールが発射されるまでは画面中央に布陣させる
-        enemy.x = (enemy.x + enemy.w / 2 < screenW / 2) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;
-        if (Math.abs( (enemy.x + enemy.w / 2) - screenW) < enemy.speed) {
-            enemy.x = screenW - enemy.w / 2; 
-        }
-        else {
-            enemy.x = (enemy.x + enemy.w / 2 < screenW / 2) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
-        }
+    // ボールが発射されるまでは画面中央に布陣させる
+    moveEnemyCenter();
     }
-    ctx.fillRect(enemy.x * 1.05, enemy.y * 1.02, enemy.w * 0.95, enemy.h * 0.98);    
+    ctx.fillRect(enemy.x * 1.05, enemy.y * 0.9, enemy.w * 0.95, enemy.h * 0.9);    
 }
+
+//敵バーを中央付近に移動させる
+function moveEnemyCenter() {
+    enemy.x = (enemy.x + enemy.w / 2 < screenW / 2) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;
+    if (Math.abs( (enemy.x + enemy.w / 2) - screenW) < enemy.speed) {
+        enemy.x = screenW - enemy.w / 2; 
+    }
+    else {
+        enemy.x = (enemy.x + enemy.w / 2 < screenW / 2) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
+    }
+}
+
 
 // 得点を描画
 function drawPoint() {
@@ -348,8 +361,13 @@ function drawBall() {
 
         //rad 1.25〜1.75の範囲
         var rad = Math.PI * 1.25 + (Math.PI * hitXRate);
+        if (ball.rad >= 1.0 && ball.rad <= 1.4) rad -= 0.2;
+        else if (ball.rad >= 1.60 && ball.rad <= 2.0) rad += 0.2;
+        
         ball.dx = ball.baseSpeed * Math.cos(rad) * ball.speed;
         ball.dy = ball.baseSpeed * Math.sin(rad) * ball.speed;
+
+        ball.rad = rad;
 
         player.isHitWait = true;
         setTimeout(function(){
@@ -399,7 +417,7 @@ function fireBall() {
         //NORMAL
         initSpeedArray = [1.0,1.2,1.4,1.6,1.8,2.0,2.2];
         initRangeArray = [130,115,100,90,80,70,60];
-        enemySpeedArray = [160,140,125,100,90,80,75]
+        enemySpeedArray = [140,120,105,80,70,60,55]
         hdpArray = [0,-10,-20,20,30];
     }
     else if(difficult == 1) {
@@ -464,7 +482,7 @@ function fireBall() {
     }
 
     ball.dx = screenW / (initRange + Math.floor(Math.random() * (initRange*1.5) ));
-    ball.dy = (screenH / (120 + Math.floor(Math.random() * 50)) ) * initSpeed;
+    ball.dy = screenH / 150.0 * initSpeed;
 
 
     //ボールの飛ぶ方向をX方向はランダムに
@@ -472,9 +490,6 @@ function fireBall() {
 
     //Y方向は前回ポイントを取った方(初回は必ず敵)
     ball.dy = isPlayerPrePoint ? ball.dy : -ball.dy;
-    
-    ball.baseDx = Math.abs(ball.dx);
-    ball.baseDy = Math.abs(ball.dy);
 
     ball.baseSpeed = Math.sqrt(Math.pow(Math.abs(ball.dx),2) + Math.pow(Math.abs(ball.dy),2));
 
@@ -601,6 +616,7 @@ function initParam(){
 
     ball.w = (screenW / 120 + screenH / 120);
     ball.h = ball.w;
+    ball.rad = 1.5;
 
     gameEndStrY = - screenH / 10;
 
