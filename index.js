@@ -164,7 +164,8 @@ function drawPlayer(){
         player.x += (dx / 15);
     } 
     //プレイヤー描画
-    ctx.fillRect(player.x, player.y, player.w, player.h);
+    // 実際の当たり判定より小さく描画するため補正値をかけている
+    ctx.fillRect(player.x * 1.05, player.y * 1.02, player.w * 0.95, player.h * 0.98);
 }
 
 //画面中央の点線描画
@@ -202,7 +203,7 @@ function drawEnemy() {
             enemy.x = (enemy.x + enemy.w / 2 < screenW / 2) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
         }
     }
-    ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);    
+    ctx.fillRect(enemy.x * 1.05, enemy.y * 1.02, enemy.w * 0.95, enemy.h * 0.98);    
 }
 
 // 得点を描画
