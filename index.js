@@ -13,6 +13,8 @@ var isGameOver = false;
 var isGameClear = false;
 var isStageSelect = false;
 var difficult = 0; // 0..NORMAL,1..HARD
+var isNormalCleared = false;
+var isHardCleared = false;
 
 var player = {
     x: 0,
@@ -96,7 +98,8 @@ function TouchEventStart(e) {
     touchX =  event.changedTouches[0].pageX;
     touchY =  event.changedTouches[0].pageY;
 
-    if(isTitle && !isLoading) {
+    if (isLoading) return;
+    if(isTitle) {
         isLoading = true;
         //オーディオの読み込み(現在未使用)
         if (!isMute) {
@@ -286,15 +289,19 @@ function drawStageSelect() {
     text = "NORMAL";
     textWidth = ctx.measureText(text);
 
-    if(!isLoading || difficult == 1 || titleAnimeFlags % 10 < 5 ) 
-        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 4);
-
+    if(!isLoading || difficult == 1 || titleAnimeFlags % 10 < 5 ) {
+        if(isNormalCleared) ctx.fillStyle = "#FFFF00";
+        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 4);        
+    }
+    ctx.fillStyle = "#FFFFFF";
     text = "HARD";
     textWidth = ctx.measureText(text);
 
-    if(!isLoading || difficult == 0 || titleAnimeFlags % 10 < 5 ) 
+    if(!isLoading || difficult == 0 || titleAnimeFlags % 10 < 5 ) {
+        if(isHardCleared) ctx.fillStyle = "#FFFF00";        
         ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 7);
-
+    }
+    ctx.fillStyle = "#FFFFFF";
     ctx.font = "70px Orbitron";
     text = "7 POINTS WIN";
     textWidth = ctx.measureText(text);
