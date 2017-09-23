@@ -185,13 +185,18 @@ function drawCenterLine(){
 // 敵プレイヤー描画
 function drawEnemy() {
     if(isGame) {
-        enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
-        if (Math.abs( (enemy.x + enemy.w / 2) - ball.x) < enemy.speed) {
+        //敵移動速度分移動させる
+        enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2; 
+        if (Math.abs( (enemy.x + enemy.w / 2) - ball.x) < enemy.speed) {            
             enemy.x = ball.x + ball.w / 2 - enemy.w / 2; 
         }
         else {
             enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + enemy.speed / 2 : enemy.x - enemy.speed / 2;            
         }
+
+        //画面外に出ないよう
+        if(enemy.x < 0) enemy.x = 0;
+        else if(enemy.x + enemy.w > screenW) enemy.x = screenW - enemy.w;
     }
     else {
         // ボールが発射されるまでは画面中央に布陣させる
