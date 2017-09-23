@@ -114,7 +114,7 @@ function TouchEventStart(e) {
     }
     else if(isStageSelect) {
         //難易度NORMALでSTART
-        if (touchY >= screenH / 20 * 7 && touchY <= screenH / 20 * 9) {
+        if (touchY >= screenH / 20 * 7 && touchY <= screenH / 20 * 10) {
             isLoading = true;
             difficult = 0;
             setTimeout(function(){
@@ -125,7 +125,7 @@ function TouchEventStart(e) {
             },1000);
         }
         //難易度NORMALでHARD
-        else if (touchY >= screenH / 20 * 13 && touchY <= screenH / 20 * 15) {
+        else if (touchY >= screenH / 20 * 11 && touchY <= screenH / 20 * 15) {
             isLoading = true;
             difficult = 1;
             setTimeout(function(){
@@ -157,13 +157,13 @@ function drawPlayer(){
     var dx = adjustTouchX - player.x;
     var absDx = Math.abs(dx);
     if (absDx > screenW / 2) {
-        player.x += (dx / 6);
+        player.x += (dx / 3);
     } else if(absDx > screenW / 4) {
-        player.x += (dx / 9);        
+        player.x += (dx / 5);        
     } else if(absDx > screenW / 50) {
-        player.x += (dx / 12);
+        player.x += (dx / 8);
     } else if(absDx > screenW / 100) {
-        player.x += (dx / 15);
+        player.x += (dx / 10);
     } 
     //プレイヤー描画
     // 実際の当たり判定より小さく描画するため補正値をかけている
@@ -291,7 +291,7 @@ function drawStageSelect() {
 
     if(!isLoading || difficult == 1 || titleAnimeFlags % 10 < 5 ) {
         if(isNormalCleared) ctx.fillStyle = "#FFFF00";
-        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 4);        
+        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 20 * 9);        
     }
     ctx.fillStyle = "#FFFFFF";
     text = "HARD";
@@ -299,7 +299,7 @@ function drawStageSelect() {
 
     if(!isLoading || difficult == 0 || titleAnimeFlags % 10 < 5 ) {
         if(isHardCleared) ctx.fillStyle = "#FFFF00";        
-        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 10 * 7);
+        ctx.fillText(text,screenW/2 - textWidth.width / 2 ,screenH / 20 * 13);
     }
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "70px Orbitron";
@@ -356,6 +356,9 @@ function drawBall() {
         
         if(++player.point >= 7) {
             isGameClear = true;
+            if (difficult == 0) isNormalCleared = true;
+            else if(difficult == 1) isHardCleared = true;
+
             setTimeout(function(){
                 isTitle = true;
             },7500);
@@ -427,8 +430,16 @@ function drawBall() {
 function fireBall() {
     isGame = true;
 
-    ball.x = screenW / 2 - ball.w;
-    ball.y = screenH / 2 - ball.h;
+    if (isPlayerPrePoint) {
+        //敵プレイヤーから発射
+        ball.x = enemy.x + enemy.w / 2;
+        ball.y = enemy.y + enemy.h + ball.h / 2;
+    }
+    else {
+        //味方プレイヤーから発射
+        ball.x = player.x + player.w / 2;
+        ball.y = player.y - ball.h / 2;
+    }
 
 
     var initSpeedArray,initRangeArray,enemySpeedArray,hdpArray;
