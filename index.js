@@ -337,7 +337,7 @@ function drawBall() {
             },5000);
         }
         else {
-            setTimeout(fireBall,1000);            
+            setTimeout(fireBall,1500);            
         }
 
     }
@@ -349,11 +349,9 @@ function drawBall() {
     }
     //プレイヤーポイント
     else if(ball.y <= 0) {
-        isGame = false;
-        
-        //HARDならfalse
-        isPlayerPrePoint = (difficult == 0) ? true : false;
-        
+        isGame = false;        
+        isPlayerPrePoint = true;
+
         if(++player.point >= 7) {
             isGameClear = true;
             if (difficult == 0) isNormalCleared = true;
@@ -364,7 +362,7 @@ function drawBall() {
             },7500);
         }
         else {
-            setTimeout(fireBall,1000);            
+            setTimeout(fireBall,1500);
         }
 
     }
@@ -588,7 +586,7 @@ function drawGameOver() {
         gameEndStrY = screenH / 3;
     }
     ctx.font = "120px Orbitron";
-    var text = "GAME OVER";
+    var text = "GAME OVER...";
     var textWidth = ctx.measureText(text);
     ctx.fillText(text,screenW/2 - textWidth.width / 2 ,gameEndStrY);
     
@@ -602,7 +600,7 @@ function drawGameClear() {
         gameEndStrY = screenH / 3;
     }
     ctx.font = "120px Orbitron";
-    var text = "GAME CLEAR";
+    var text = difficult == 0 ? "GAME CLEAR!!" : "DESHI!!";
     var textWidth = ctx.measureText(text);
     ctx.fillText(text,screenW/2 - textWidth.width / 2 ,gameEndStrY);
 
