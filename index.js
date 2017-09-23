@@ -185,12 +185,21 @@ function drawCenterLine(){
 function drawEnemy() {
     if(isGame) {
         //味方陣地エリアにボールがあり、角度が大きくついている場合は中央付近に移動させる
-        if ( (ball.rad <= 1.35 || ball.rad >= 1.65) && ball.y > screenH / 10 * 7){
+        if ( (ball.rad <= 0.3 || ball.rad >= 0.7) && ball.y > screenH / 10 * 7){
             moveEnemyCenter();
         }
         else {
+            var adjustEnemySpeed = enemy.speed; 
+
+            //ボールの反射角が一定以上ならば加速させる
+            if (ball.rad < 0.30 || ball.rad > 0.70) adjustEnemySpeed *= 1.2;
+            else if (ball.rad < 0.35 || ball.rad > 0.65) adjustEnemySpeed *= 1.1;
+            
+            //ボールの速度が一定以上なら加速させる
+            //if (ball.speed > 2.5) adjustEnemySpeed *= 1.05;
+
             //ボールの速度より遅い移動速度であれば若干加速させる
-            var adjustEnemySpeed = enemy.speed < Math.abs(ball.dx) ? enemy.speed * 1.1 : enemy.speed;
+            if (adjustEnemySpeed < Math.abs(ball.dx)) adjustEnemySpeed *= 1.05;
             
             //敵移動速度分移動させる
             enemy.x = (enemy.x + enemy.w / 2 < ball.x) ? enemy.x + adjustEnemySpeed / 2 : enemy.x - adjustEnemySpeed / 2; 
@@ -209,7 +218,10 @@ function drawEnemy() {
     // ボールが発射されるまでは画面中央に布陣させる
     moveEnemyCenter();
     }
+    //HARDで5得点取っている時色が変わる
+    if (difficult == 1 && player.point >= 5)     ctx.fillStyle = "#FF0000";    
     ctx.fillRect(enemy.x * 1.05, enemy.y * 0.9, enemy.w * 0.95, enemy.h * 0.9);    
+    ctx.fillStyle = "#FFFFFF";
 }
 
 //敵バーを中央付近に移動させる
@@ -331,7 +343,9 @@ function drawBall() {
     //プレイヤーポイント
     else if(ball.y <= 0) {
         isGame = false;
-        isPlayerPrePoint = true;
+        
+        //HARDならfalse
+        isPlayerPrePoint = (difficult == 0) ? true : false;
         
         if(++player.point >= 7) {
             isGameClear = true;
@@ -356,18 +370,21 @@ function drawBall() {
         playHitSE();
         accelBall();
 
-        //当たった場所によって角度を変える
-        var hitXRate = (((ball.x + (ball.w / 2)) - player.x) / player.w) / 2;
+        //当たった場所によって角度を変える (範囲 0 〜 0.5)
+        var hitXRate = (((ball.x + (ball.w / 2)) - player.x) / (player.w + (ball.w / 2)) ) / 2;
 
         //rad 1.25〜1.75の範囲
         var rad = Math.PI * 1.25 + (Math.PI * hitXRate);
-        if (ball.rad >= 1.0 && ball.rad <= 1.4) rad -= 0.2;
-        else if (ball.rad >= 1.60 && ball.rad <= 2.0) rad += 0.2;
+//        alert("rad..." + rad + " ball.rad..." + ball.rad + " hitXRate..." + hitXRate);
+//        alert("radacos..." + Math.acos(rad) + " radasin" + Math.asinh(rad));
+        
+        if (ball.rad >= 0.1 && ball.rad <= 0.5) rad -= 0.1 * Math.PI;
+        else if (ball.rad >= 0.6 && ball.rad <= 0.9) rad += 0.1 * Math.PI;
         
         ball.dx = ball.baseSpeed * Math.cos(rad) * ball.speed;
         ball.dy = ball.baseSpeed * Math.sin(rad) * ball.speed;
 
-        ball.rad = rad;
+        ball.rad = (rad - Math.PI) / Math.PI;
 
         player.isHitWait = true;
         setTimeout(function(){
@@ -415,17 +432,17 @@ function fireBall() {
 
     if(difficult == 0) {
         //NORMAL
-        initSpeedArray = [1.0,1.2,1.4,1.6,1.8,2.0,2.2];
+        initSpeedArray = [1.3,1.5,1.6,1.7,1.8,2.0,2.2];
         initRangeArray = [130,115,100,90,80,70,60];
-        enemySpeedArray = [140,120,105,80,70,60,55]
+        enemySpeedArray = [170,150,135,110,100,90,75]
         hdpArray = [0,-10,-20,20,30];
     }
     else if(difficult == 1) {
         //HARD
-        initSpeedArray = [1.4,1.7,2.0,2.3,2.6,2.9,3.2];
+        initSpeedArray = [2.6,2.8,3.0,3.2,3.3,3.4,3.5];
         initRangeArray = [80,70,60,50,40,30,25];
-        enemySpeedArray = [160,140,125,100,90,80,75]
-        hdpArray = [0,-10,-20,20,30];
+        enemySpeedArray = [90,80,70,65,50,45,40]
+        hdpArray = [0,-10,-20,10,20];
     }
 
 
@@ -492,31 +509,7 @@ function fireBall() {
     ball.dy = isPlayerPrePoint ? ball.dy : -ball.dy;
 
     ball.baseSpeed = Math.sqrt(Math.pow(Math.abs(ball.dx),2) + Math.pow(Math.abs(ball.dy),2));
-
     ball.speed = 1.0;
-    
-    //敵の能力もスコアによって変動    
-    if (totalPoint < 3) {
-        enemy.speed = screenW / (160 + hdp);
-    }
-    else if (totalPoint < 6) {
-        enemy.speed = screenW / (140 + hdp);        
-    }
-    else if (totalPoint < 8) {
-        enemy.speed = screenW / (125 + hdp);        
-    }
-    else if (totalPoint < 12) {
-        enemy.speed = screenW / (100 + hdp);        
-    }
-    else if (totalPoint < 16) {
-        enemy.speed = screenW / (90 + hdp);        
-    }
-    else if (totalPoint < 20) {
-        enemy.speed = screenW / (80 + hdp);        
-    }
-    else{
-        enemy.speed = screenW / (75 + hdp);        
-    }
 }
 
 function playHitSE(){
@@ -616,10 +609,12 @@ function initParam(){
 
     ball.w = (screenW / 120 + screenH / 120);
     ball.h = ball.w;
-    ball.rad = 1.5;
+    ball.rad = 0.5;
 
     gameEndStrY = - screenH / 10;
 
     isGameOver = false;
     isGameClear = false;
+
+    isPlayerPrePoint = false;
 }
