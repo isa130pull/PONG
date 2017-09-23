@@ -379,36 +379,82 @@ function fireBall() {
     ball.x = screenW / 2 - ball.w;
     ball.y = screenH / 2 - ball.h;
 
+
+    var initSpeedArray,initRangeArray,enemySpeedArray,hdpArray;
+
+    //難易度によってパラメータを変える
+
     //初速補正(ポイントが増えるごとに初速が増す)
-    var initSpeed = 1.0;
-    var initRange = 80;
-    var totalPoint = player.point * 1.3 + enemy.point;
-    if(totalPoint >= 2 && totalPoint < 5) {
-        initSpeed = 1.2;
-        initRange = 70;
+
+    if(difficult == 0) {
+        //NORMAL
+        initSpeedArray = [1.0,1.2,1.4,1.6,1.8,2.0,2.2];
+        initRangeArray = [130,115,100,90,80,70,60];
+        enemySpeedArray = [160,140,125,100,90,80,75]
+        hdpArray = [0,-10,-20,20,30];
     }
-    else if(totalPoint < 7) {
-        initSpeed = 1.4;
-        initRange = 60;
-    }
-    else if(totalPoint < 10) {
-        initSpeed = 1.6;
-        initRange = 50;
-    }
-    else if(totalPoint < 12) {
-        initSpeed = 1.8;
-        initRange = 40;
-    }
-    else if(totalPoint < 15) {
-        initSpeed = 2.0;
-        initRange = 30;
-    }
-    else if(totalPoint >= 15) {
-        initSpeed = 2.2;
-        initRange = 25;
+    else if(difficult == 1) {
+        //HARD
+        initSpeedArray = [1.4,1.7,2.0,2.3,2.6,2.9,3.2];
+        initRangeArray = [80,70,60,50,40,30,25];
+        enemySpeedArray = [160,140,125,100,90,80,75]
+        hdpArray = [0,-10,-20,20,30];
     }
 
-    ball.dx = screenW / (initRange + Math.floor(Math.random() * (initRange*3) ));
+
+    var initSpeed,initRange,enemySpeed,hdp;
+    var initRange = 80;
+
+    var totalPoint = player.point * 1.3 + enemy.point;
+
+    //// 敵との得失点差
+    //こっちが大きく勝っている
+    if (player.point - enemy.point >= 2) hdp = hdpArray[1];
+    else if (player.point - enemy.point >= 4) hdp = hdpArray[2];
+    //こっちが負けている
+    else if(enemy.point - player.point >= 2) hdp = hdpArray[3];
+    else if(enemy.point - player.point >= 4) hdp = hdpArray[4];
+    //得失点差が小さい場合
+    else hdp = hdpArray[0];
+
+    //敵味方の総得点でパラメータを設定
+    if(totalPoint <= 2) {
+        initSpeed = initSpeedArray[0];
+        initRange = initRangeArray[0];
+        enemy.speed = screenW / (enemySpeedArray[0] + hdp);
+    }
+    else if(totalPoint < 5) {
+        initSpeed = initSpeedArray[1];
+        initRange = initRangeArray[1];
+        enemy.speed = screenW / (enemySpeedArray[1] + hdp);
+    }
+    else if(totalPoint < 7) {
+        initSpeed = initSpeedArray[2];
+        initRange = initRangeArray[2];
+        enemy.speed = screenW / (enemySpeedArray[2] + hdp);
+    }
+    else if(totalPoint < 10) {
+        initSpeed = initSpeedArray[3];
+        initRange = initRangeArray[3];
+        enemy.speed = screenW / (enemySpeedArray[3] + hdp);
+    }
+    else if(totalPoint < 12) {
+        initSpeed = initSpeedArray[4];
+        initRange = initRangeArray[4];
+        enemy.speed = screenW / (enemySpeedArray[4] + hdp);
+    }
+    else if(totalPoint < 15) {
+        initSpeed = initSpeedArray[5];
+        initRange = initRangeArray[5];
+        enemy.speed = screenW / (enemySpeedArray[5] + hdp);
+    }
+    else if(totalPoint >= 15) {
+        initSpeed = initSpeedArray[6];
+        initRange = initRangeArray[6];
+        enemy.speed = screenW / (enemySpeedArray[6] + hdp);
+    }
+
+    ball.dx = screenW / (initRange + Math.floor(Math.random() * (initRange*1.5) ));
     ball.dy = (screenH / (120 + Math.floor(Math.random() * 50)) ) * initSpeed;
 
 
@@ -422,12 +468,6 @@ function fireBall() {
     ball.baseDy = Math.abs(ball.dy);
 
     ball.speed = 1.0;
-
-    var hdp = 0;
-    if (player.point - enemy.point >= 2) hdp = -10;
-    else if (player.point - enemy.point >= 3) hdp = -20;    
-    else if(enemy.point - player.point >= 2) hdp = 20;
-    else if(enemy.point - player.point >= 4) hdp = 30;
     
     //敵の能力もスコアによって変動    
     if (totalPoint < 3) {
